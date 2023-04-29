@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-#266 50-25
-#477 100-30
-# In[43]:
-
 
 import numpy as np
 import tensorflow as tf
@@ -20,8 +14,6 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix, classification_report
 
 
-# In[44]:
-
 
 # Define the paths to your image and csv folders
 train_val_test= "charts/train_val"
@@ -29,8 +21,6 @@ test = "charts/test"
 train_path_csv = "charts/train_val.csv"
 train_val_csv = pd.read_csv(train_path_csv)
 
-
-# In[45]:
 
 
 # load training dataset in numpy array
@@ -60,20 +50,15 @@ x_train = np.load('x_train.npy')
 y_train = np.load('y_train.npy')
 
 
-# In[46]:
 
 
 x_train.shape
 
 
-# In[47]:
-
 
 x_train[:5]
 y_train[:5]
 
-
-# In[48]:
 
 
 # load test dataset in numpy array
@@ -103,13 +88,8 @@ x_test = np.load('x_test.npy')
 y_test = np.load('y_test.npy')
 
 
-# In[49]:
-
-
 x_test.shape
 
-
-# In[50]:
 
 
 # check the images loaded
@@ -119,7 +99,6 @@ plt.imshow(x_train[208])
 plt.imshow(x_train[444])
 
 
-# In[51]:
 
 
 # define some classes from the images we have observed
@@ -133,9 +112,6 @@ y_train.shape
 y_test.shape
 
 
-# In[52]:
-
-
 # we need to map the lables from csv to the images somehow
 # function to test the chart sample
 def image_sample(x, y, index):
@@ -146,21 +122,15 @@ def image_sample(x, y, index):
     plt.xlabel(image_classes[y[index]])
 
 
-# In[53]:
-
 
 image_sample(x_train,y_train,0)
 image_sample(x_train,y_train,208)
 image_sample(x_train,y_train,444)
 
 
-# In[54]:
-
 
 # now we have mapped the corresponding labels to the image
 
-
-# In[55]:
 
 
 # normalize the image
@@ -171,13 +141,10 @@ x_test=x_train /255
 
 #
 
-# In[56]:
 
 
 x_test.shape
 
-
-# In[57]:
 
 
 # take the label for train data from csv file
@@ -185,13 +152,9 @@ y_train_index = train_val_csv['image_index']
 y_train_type = train_val_csv['type']
 
 
-# In[58]:
-
 
 y_train_type[:5]
 
-
-# In[ ]:
 
 
 # writing a simple nn to test first
@@ -207,7 +170,6 @@ model.compile(optimizer='SGD', loss='sparse_categorical_crossentropy', metrics=[
 model.fit(x_train,y_train,epochs=10)
 
 
-# In[ ]:
 
 
 # Split the training images and labels into training and validation sets
@@ -215,13 +177,7 @@ from sklearn.model_selection import train_test_split
 x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=0.2, random_state=42)
 
 
-# In[ ]:
-
-
 model.evaluate(x_test,y_test)
-
-
-# In[ ]:
 
 
 y_pred = model.predict(x_test)
@@ -230,13 +186,8 @@ y_pred_classes = [np.argmax(ele) for ele in y_pred]
 # print("classificaton report : \n",classification_report(y_test,y_pred_classes))
 
 
-# In[ ]:
-
-
 # here we see the accuracy is very low and we need to modify our nn to add more layers for better accuracy
 
-
-# In[ ]:
 
 
 # Print the shapes of the arrays to verify that they loaded correctly
@@ -245,8 +196,6 @@ print("Train Labels Shape:", y_train.shape)
 print("Test Images Shape:", x_test.shape)
 print("Test Labels Shape:", y_test.shape)
 
-
-# In[ ]:
 
 
 # modify the model architecture to cmnn
@@ -275,13 +224,8 @@ plt.legend(['Train', 'Validation'], loc='upper right')
 plt.show()
 
 
-# In[ ]:
-
-
 cnn_model.evaluate(x_test,y_test)
 
-
-# In[ ]:
 
 
 image_sample(x_test,y_test,1)
@@ -290,39 +234,23 @@ image_sample(x_test,y_test,25)
 image_sample(x_test,y_test,30)
 
 
-# In[ ]:
-
 
 # Observation: we can see some wrong predictions
 
-
-# In[ ]:
 
 
 y_pred = cnn_model.predict(x_test)
 y_pred[:5]
 
 
-# In[ ]:
-
-
 y_classes = [np.argmax(element) for element in y_pred]
 y_classes[:5]
-
-
-# In[ ]:
 
 
 y_test[:5]
 
 
-# In[ ]:
-
-
 # here we see some values are not matching
-
-
-# In[ ]:
 
 
 # test actual and predicted
@@ -334,28 +262,17 @@ image_sample(x_test,y_test,15) #actual
 image_classes[y_classes[15]] #predicted
 
 
-# In[ ]:
-
-
 # some values are not matching
-
-
-# In[ ]:
 
 
 print("classification report: \n", classification_report(y_test,y_classes))
 
-
-# In[ ]:
 
 
 # Generate the confusion matrix
 conf_mat = confusion_matrix(y_test, y_classes)
 print('Confusion Matrix:')
 print(conf_mat)
-
-
-# In[ ]:
 
 
 # Plot the confusion matrix
@@ -366,14 +283,8 @@ plt.xlabel('Predicted')
 plt.ylabel('Actual')
 
 
-# In[ ]:
-
-
 # for 50 iterations, we can see some promising accuracy, more training will be required for better accuracy
 # in the confusion matrix, whatever is not in diagonal is a error
-
-
-# In[ ]:
 
 
 from tensorflow.keras.applications import VGG16
@@ -381,8 +292,6 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 # Load the pre-trained model
 vgg16_model = VGG16(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
 
-
-# In[ ]:
 
 
 # Replace the final classification layer with a new layer
@@ -393,29 +302,19 @@ predictions = Dense(5, activation='softmax')(x)
 pt_model = tf.keras.Model(inputs=vgg16_model.input, outputs=predictions)
 
 
-# In[ ]:
-
-
 # Freeze the weights of all layers except the new classification layer
 for layer in pt_model.layers:
     layer.trainable = False
 
-
-# In[ ]:
 
 
 # Compile the model with categorical crossentropy loss and Adam optimizer
 pt_model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
 
-# In[ ]:
-
-
 # Print the summary of the model architecture
 pt_model.summary()
 
-
-# In[ ]:
 
 
 # Set up data generators for image augmentation and feeding data to the model
@@ -431,15 +330,11 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 
-# In[ ]:
-
 
 # flow method generates batches of augmented data
 train_generator = train_datagen.flow(x_train, y_train, batch_size=32)
 test_generator = train_datagen.flow(x_test, y_test, batch_size=32)
 
-
-# In[ ]:
 
 
 # Train the model with early stopping
